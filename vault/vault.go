@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-var Logger *log.Logger
-
 func NewRenewer(vaultAddr, token string, increment string, gracePeriod string) (*Renewer, error) {
 	var httpClient = &http.Client{
 		Timeout: 10 * time.Second,
@@ -66,7 +64,7 @@ func (c *Renewer) renew() (*api.Secret, error) {
 		if err == nil {
 			return renewal, nil
 		}
-		Logger.Printf("Failed to renew, waiting to retry... (%s)\n", err)
+		log.Printf("Failed to renew, waiting to retry... (%s)\n", err)
 	}
 	return nil, errors.New("Failed retring to renew token.")
 }
@@ -79,21 +77,21 @@ func (c *Renewer) Run() error {
 	for {
 		renewedSecret, err := c.renew()
 		if err != nil {
-			Logger.Printf("Failed to c.renew() (%s)", err)
+			log.Printf("Failed to c.renew() (%s)", err)
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		newTTL, err := renewedSecret.TokenTTL()
 		if err != nil {
-			Logger.Printf("Failed to renewedSecret.TokenTTL() (%s)", err)
+			log.Printf("Failed to renewedSecret.TokenTTL() (%s)", err)
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		Logger.Printf("Success renew, ttl: %s", newTTL)
+		log.Printf("Success renew, ttl: %s", newTTL)
 
 		sleepDuration := c.sleepDuration(newTTL)
 
-		Logger.Printf("Sleep %v", sleepDuration)
+		log.Printf("Sleep %v", sleepDuration)
 		time.Sleep(sleepDuration)
 	}
 }
