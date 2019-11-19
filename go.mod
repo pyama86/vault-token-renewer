@@ -1,0 +1,10 @@
+module github.com/takaishi/vault-token-renewer
+
+go 1.13
+
+require (
+	github.com/hashicorp/vault/api v1.0.4
+	github.com/lestrrat-go/backoff v1.0.0
+	github.com/pkg/errors v0.8.1
+	github.com/urfave/cli v1.22.1
+)
