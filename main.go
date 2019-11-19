@@ -13,7 +13,6 @@ var Logger *log.Logger
 func main() {
 	app := cli.NewApp()
 	app.Name = "vault-token-renewer"
-	app.Usage = "fight the loneliness!"
 	app.Action = func(c *cli.Context) error {
 		tokenRenewer, err := vault.NewRenewer(
 			os.Getenv("VAULT_ADDR"),
