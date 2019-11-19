@@ -2,9 +2,6 @@ name: Docker Image CI
 
 on: [push]
 
-env:
-  GIT_TAG: {{github.ref}}
-
 jobs:
 
   build:
@@ -14,5 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: echo $GIT_TAG
+      run: echo ${{ github.ref }}
 #      run: docker build . --file Dockerfile --tag rtakaishi/vault-token-renewer:$(date +%s)
