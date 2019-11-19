@@ -1,15 +1,19 @@
 name: Docker Image CI
 
-on: [push]
+on: 
+  create:
+    tags:
+      - v*.*.*
+    branches:
+      - master
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Build the Docker image
-      run: echo ${{ github.ref }}
-#      run: docker build . --file Dockerfile --tag rtakaishi/vault-token-renewer:$(date +%s)
+      run: |
+        tag=$(echo ${{ github.ref }} | sed 's/refs\/tags\///g' | tr -d '\n')
+        docker build . --file Dockerfile --tag rtakaishi/vault-token-renewer:${tag}
+
