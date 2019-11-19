@@ -10,7 +10,7 @@ on:
 env:
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN}}
 
-  jobs:
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
