@@ -2,6 +2,8 @@ APP=vault-token-renewer
 REGISTRY?=rtakaishi
 COMMIT_SHA=$(shell git rev-parse --short HEAD)
 
+export GO111MODULE=on
+
 .PHONY: build
 ## build: build the application
 build: clean
@@ -16,6 +18,18 @@ run:
 ## clean: cleans the binary
 clean:
 	go clean
+
+.PHONY: deps
+## deps: Installing dependencies
+deps:
+	go get -d
+	go mod tidy
+
+.PHONY: depsdev
+## depsdev: Installing dependencies for development
+depsdev:
+	GO111MODULE=off go get -u \
+	golang.org/x/lint/golint
 
 .PHONY: docker-build
 ## docker-build: build container image
