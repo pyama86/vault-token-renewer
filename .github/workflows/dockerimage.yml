@@ -1,15 +1,13 @@
+---
 name: Docker Image CI
-
-on: 
-  create:
+on:
+  push:
     tags:
       - v*.*.*
     branches:
       - master
-
 env:
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN}}
-
 jobs:
   build:
     runs-on: ubuntu-latest
