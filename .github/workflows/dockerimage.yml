@@ -1,11 +1,9 @@
 name: Docker Image CI
 
 on: 
-  create:
+  push:
     tags:
       - v*.*.*
-    branches:
-      - master
 
 env:
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN}}
