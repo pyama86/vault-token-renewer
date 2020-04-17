@@ -49,6 +49,29 @@ type Renewer struct {
 	gracePeriod time.Duration
 }
 
+func (c *Renewer) Run() error {
+	for {
+		renewedSecret, err := c.renew()
+		if err != nil {
+			log.Printf("Failed to c.renew() (%s)", err)
+			time.Sleep(10 * time.Second)
+			continue
+		}
+		newTTL, err := renewedSecret.TokenTTL()
+		if err != nil {
+			log.Printf("Failed to renewedSecret.TokenTTL() (%s)", err)
+			time.Sleep(10 * time.Second)
+			continue
+		}
+		log.Printf("Success renew, ttl: %s", newTTL)
+
+		sleepDuration := c.sleepDuration(newTTL)
+
+		log.Printf("Sleep %v", sleepDuration)
+		time.Sleep(sleepDuration)
+	}
+}
+
 var policy = backoff.NewExponential(
 	backoff.WithInterval(500*time.Millisecond),
 	backoff.WithJitterFactor(0.05),
@@ -71,27 +94,4 @@ func (c *Renewer) renew() (*api.Secret, error) {
 
 func (c *Renewer) sleepDuration(ttl time.Duration) time.Duration {
 	return time.Duration(ttl.Seconds()-c.gracePeriod.Seconds()) * time.Second
-}
-
-func (c *Renewer) Run() error {
-	for {
-		renewedSecret, err := c.renew()
-		if err != nil {
-			log.Printf("Failed to c.renew() (%s)", err)
-			time.Sleep(10 * time.Second)
-			continue
-		}
-		newTTL, err := renewedSecret.TokenTTL()
-		if err != nil {
-			log.Printf("Failed to renewedSecret.TokenTTL() (%s)", err)
-			time.Sleep(10 * time.Second)
-			continue
-		}
-		log.Printf("Success renew, ttl: %s", newTTL)
-
-		sleepDuration := c.sleepDuration(newTTL)
-
-		log.Printf("Sleep %v", sleepDuration)
-		time.Sleep(sleepDuration)
-	}
 }
