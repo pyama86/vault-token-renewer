@@ -7,19 +7,23 @@ import (
 	"github.com/pkg/errors"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
-func NewRenewer(vaultAddr, token string, increment string, gracePeriod string) (*Renewer, error) {
+func NewVaultClientFromEnv() (*api.Client, error) {
 	var httpClient = &http.Client{
 		Timeout: 10 * time.Second,
 	}
-	client, err := api.NewClient(&api.Config{Address: vaultAddr, HttpClient: httpClient})
+	client, err := api.NewClient(&api.Config{Address: os.Getenv("VAULT_ADDR"), HttpClient: httpClient})
 	if err != nil {
 		return nil, err
 	}
-	client.SetToken(token)
+	client.SetToken(os.Getenv("VAULT_TOKEN"))
+	return client, nil
+}
 
+func NewTokenRenewer(client *api.Client, increment string, gracePeriod string) (*TokenRenewer, error) {
 	incrementDuration, err := time.ParseDuration(increment)
 	if err != nil {
 		return nil, err
@@ -30,15 +34,15 @@ func NewRenewer(vaultAddr, token string, increment string, gracePeriod string) (
 		return nil, err
 	}
 
-	return &Renewer{
-		token:       token,
+	return &TokenRenewer{
+		token:       client.Token(),
 		client:      client,
 		increment:   incrementDuration,
 		gracePeriod: gracePeriodDuration,
 	}, nil
 }
 
-type Renewer struct {
+type TokenRenewer struct {
 	token  string
 	client *api.Client
 
@@ -49,7 +53,7 @@ type Renewer struct {
 	gracePeriod time.Duration
 }
 
-func (c *Renewer) Run() error {
+func (c *TokenRenewer) Run() error {
 	for {
 		renewedSecret, err := c.renew()
 		if err != nil {
@@ -78,7 +82,7 @@ var policy = backoff.NewExponential(
 	backoff.WithMaxRetries(25),
 )
 
-func (c *Renewer) renew() (*api.Secret, error) {
+func (c *TokenRenewer) renew() (*api.Secret, error) {
 	b, cancel := policy.Start(context.Background())
 	defer cancel()
 
@@ -92,6 +96,6 @@ func (c *Renewer) renew() (*api.Secret, error) {
 	return nil, errors.New("Failed retring to renew token.")
 }
 
-func (c *Renewer) sleepDuration(ttl time.Duration) time.Duration {
+func (c *TokenRenewer) sleepDuration(ttl time.Duration) time.Duration {
 	return time.Duration(ttl.Seconds()-c.gracePeriod.Seconds()) * time.Second
 }

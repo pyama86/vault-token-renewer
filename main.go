@@ -31,25 +31,21 @@ func main() {
 }
 
 func run() error {
-	tokenRenewer, err := NewRenewer(
-		os.Getenv("VAULT_ADDR"),
-		os.Getenv("VAULT_TOKEN"),
+	vault, err := NewVaultClientFromEnv()
+	if err != nil {
+		return err
+	}
+
+	tokenRenewer, err := NewTokenRenewer(
+		vault,
 		os.Getenv("VAULT_INCREMENT"),
 		os.Getenv("VAULT_GRACE_PERIOD"),
 	)
 	if err != nil {
-		return errors.Wrap(err, "Failed to create Renewer")
+		return errors.Wrap(err, "Failed to create TokenRenewer")
 	}
 
-	var httpClient = &http.Client{
-		Timeout: 10 * time.Second,
-	}
-	client, err := api.NewClient(&api.Config{Address: os.Getenv("VAULT_ADDR"), HttpClient: httpClient})
-	if err != nil {
-		return err
-	}
-	client.SetToken(os.Getenv("VAULT_TOKEN"))
-	go getTokenTTL(client)
+	go getTokenTTL(vault)
 
 	http.Handle("/metrics", promhttp.Handler())
 
