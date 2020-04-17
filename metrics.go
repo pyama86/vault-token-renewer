@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/hashicorp/vault/api"
 	"github.com/prometheus/client_golang/prometheus"
-	"os"
+	"github.com/prometheus/common/log"
 	"time"
 )
 
@@ -14,18 +14,25 @@ var tokenTTLCollector = prometheus.NewGauge(prometheus.GaugeOpts{
 	Name:      "ttl",
 })
 
-func getTokenTTL(vault *api.Client) error {
+type VaultTokenTTLSetter struct {
+	vault *api.Client
+}
+
+func NewVaultTokenTTLSetter(vault *api.Client) *VaultTokenTTLSetter {
+	return &VaultTokenTTLSetter{vault: vault}
+}
+
+func (s *VaultTokenTTLSetter) Run() {
 	for {
-		secret, err := vault.Auth().Token().Lookup(os.Getenv("VAULT_TOKEN"))
+		secret, err := s.vault.Auth().Token().Lookup(s.vault.Token())
 		if err != nil {
-			return err
+			log.Error(err)
 		}
 		ttl, err := secret.Data["ttl"].(json.Number).Float64()
 		if err != nil {
-			return err
+			log.Error(err)
 		}
 		tokenTTLCollector.Set(ttl)
 		time.Sleep(10 * time.Second)
 	}
-	return nil
 }

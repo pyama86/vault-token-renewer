@@ -36,7 +36,7 @@ func run() error {
 		return errors.Wrap(err, "Failed to create TokenRenewer")
 	}
 
-	go getTokenTTL(vault)
+	go NewVaultTokenTTLSetter(vault).Run()
 
 	http.Handle("/metrics", promhttp.Handler())
 
