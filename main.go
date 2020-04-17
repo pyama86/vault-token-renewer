@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/pkg/errors"
-	"github.com/takaishi/vault-token-renewer/vault"
 	"github.com/urfave/cli"
 	"log"
 	"os"
@@ -14,7 +13,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "vault-token-renewer"
 	app.Action = func(c *cli.Context) error {
-		tokenRenewer, err := vault.NewRenewer(
+		tokenRenewer, err := NewRenewer(
 			os.Getenv("VAULT_ADDR"),
 			os.Getenv("VAULT_TOKEN"),
 			os.Getenv("VAULT_INCREMENT"),
