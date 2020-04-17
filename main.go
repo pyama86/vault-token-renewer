@@ -35,7 +35,7 @@ func run() error {
 	}
 
 	go NewVaultTokenTTLSetter(vault).Run()
-	go NewMetricsServer().Run()
+	go NewHttpServer(vault).Run()
 
 	return tokenRenewer.Run()
 }
