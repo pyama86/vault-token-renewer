@@ -35,7 +35,6 @@ func NewTokenRenewer(client *api.Client, increment string, gracePeriod string) (
 	}
 
 	return &TokenRenewer{
-		token:       client.Token(),
 		client:      client,
 		increment:   incrementDuration,
 		gracePeriod: gracePeriodDuration,
@@ -43,7 +42,6 @@ func NewTokenRenewer(client *api.Client, increment string, gracePeriod string) (
 }
 
 type TokenRenewer struct {
-	token  string
 	client *api.Client
 
 	// increment is time to extend token's TTL.
