@@ -3,9 +3,7 @@ package main
 import (
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -37,10 +35,7 @@ func run() error {
 	}
 
 	go NewVaultTokenTTLSetter(vault).Run()
-
-	http.Handle("/metrics", promhttp.Handler())
-
-	go http.ListenAndServe(":8080", nil)
+	go NewMetricsServer().Run()
 
 	return tokenRenewer.Run()
 }

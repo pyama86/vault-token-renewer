@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"github.com/hashicorp/vault/api"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/log"
+	"net/http"
 	"time"
 )
 
@@ -35,4 +37,16 @@ func (s *VaultTokenTTLSetter) Run() {
 		tokenTTLCollector.Set(ttl)
 		time.Sleep(10 * time.Second)
 	}
+}
+
+type MetricsServer struct {
+}
+
+func NewMetricsServer() *MetricsServer {
+	return &MetricsServer{}
+}
+
+func (s *MetricsServer) Run() error {
+	http.Handle("/metrics", promhttp.Handler())
+	return http.ListenAndServe(":8080", nil)
 }
