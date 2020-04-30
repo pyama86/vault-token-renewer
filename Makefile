@@ -34,8 +34,8 @@ depsdev:
 .PHONY: docker-build
 ## docker-build: build container image
 docker-build:
-	echo docker build -t ${APP} .
-	echo docker tag ${APP} ${REGISTRY}/${APP}:${COMMIT_SHA}
+	docker build -t ${APP} .
+	docker tag ${APP} ${REGISTRY}/${APP}:${COMMIT_SHA}
 
 .PHONY: docker-push
 ## docker-push: push container image
