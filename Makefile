@@ -1,5 +1,5 @@
 APP=vault-token-renewer
-REGISTRY?=rtakaishi
+REGISTRY?=pyama
 COMMIT_SHA=$(shell git rev-parse --short HEAD)
 
 export GO111MODULE=on
