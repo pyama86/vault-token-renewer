@@ -1,6 +1,6 @@
 APP=vault-token-renewer
 REGISTRY?=pyama
-COMMIT_SHA=$(shell git rev-parse --short HEAD)
+COMMIT_SHA=v.0.0.3
 
 export GO111MODULE=on
 
