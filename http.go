@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	"github.com/hashicorp/vault/api"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"time"
 )
 
 var tokenTTLCollector = prometheus.NewGauge(prometheus.GaugeOpts{
