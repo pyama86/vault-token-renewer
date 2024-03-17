@@ -14,7 +14,7 @@ jobs:
     - name: Build the Docker image
       run: |
         tag=$(echo ${{ github.ref }} | sed 's/refs\/tags\///g' | tr -d '\n')
-        docker login -u rtakaishi -p $DOCKER_HUB_TOKEN
-        docker build . --file Dockerfile --tag rtakaishi/vault-token-renewer:${tag}
-        docker push rtakaishi/vault-token-renewer:${tag}
+        docker login -u pyama -p $DOCKER_HUB_TOKEN
+        docker build . --file Dockerfile --tag pyama/vault-token-renewer:${tag}
+        docker push pyama/vault-token-renewer:${tag}
 
