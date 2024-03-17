@@ -34,7 +34,7 @@ depsdev:
 .PHONY: docker-build
 ## docker-build: build container image
 docker-build:
-	docker build -t ${APP} .
+	docker build --platform linux/amd64 -t ${APP} .
 	docker tag ${APP} ${REGISTRY}/${APP}:${COMMIT_SHA}
 
 .PHONY: docker-push
