@@ -3,7 +3,7 @@ module github.com/takaishi/vault-token-renewer
 go 1.22.0
 
 require (
-	github.com/hashicorp/vault/api v1.12.1
+	github.com/hashicorp/vault/api v1.12.2
 	github.com/lestrrat-go/backoff v1.0.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.0
